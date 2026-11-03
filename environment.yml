@@ -1,0 +1,18 @@
+name: capstone
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pandas
+  - numpy
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - pyarrow
+  - lightgbm
+  - jupyter
+  - ipykernel
+  - nbstripout
+  - pip
+  - pip:
+    - archetypes

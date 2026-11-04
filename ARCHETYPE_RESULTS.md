@@ -93,7 +93,7 @@ Both datasets were fitted with **K = 6, 7, 8, 9, 10, 11 and 12**, using three st
 
 Each table lists the ten largest absolute standardized deviations, strongest first. **High** and **Low** mean above or below the pooled player-season mean after median imputation. These describe the fitted archetype, not an average of a hard-assigned player group. The short explanations also use supporting statistics from the saved profiles.
 
-`% Ast3`, `% Ast Rim` and `% Ast Dunk` describe where a player’s assists lead. Assisted-make percentages describe how the player’s own shots were created. `% Of Team ...` variables are the individual player’s shares of team totals. Numerical profiles and player records remain private.
+`% Ast3`, `% Ast Rim` and `% Ast Dunk` describe where a player’s assists lead. Assisted-make percentages describe how the player’s own shots were created. `% Of Team ...` variables are the individual player’s shares of team totals. The [45-variable player archetype distributions](results/player_archetype_results.csv) contain player details and derived archetype percentages. Source statistical features and numerical archetype profiles remain private.
 
 ### 49-variable version
 

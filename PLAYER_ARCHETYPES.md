@@ -103,9 +103,11 @@ train/test experiment is added. Three starts check initialization sensitivity, n
 bootstrap stability. Small-denominator percentages, correlated features and valid extremes
 can affect the profiles. FT Ratio's exported definition remains unresolved.
 
-Only code, output-free notebook source, methodology and aggregate findings belong in
-GitHub. Raw observations, player examples, fitted numerical profiles, mixture weights,
-arrays and executed notebooks remain local. Clear notebook outputs before committing;
+The explicitly approved [45-variable player results](results/player_archetype_results.csv)
+are public: player name, season, team, position, class, nine archetype percentages and
+the top three archetypes. This export contains no source statistical feature columns.
+Raw statistical data, fitted numerical profiles, arrays and executed notebooks remain
+local. Other generated files stay ignored. Clear notebook outputs before committing;
 `nbstripout --install` is available through the pinned workflow's requirements.
 
 Package reference: [archetypes.AA documentation](https://archetypes.readthedocs.io/en/latest/reference/_autosummary/numpy/archetypes.AA.html).

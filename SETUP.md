@@ -116,10 +116,14 @@ dd[dd["column"].str.contains("Corner 3")]
 ## Things to know about the data
 
 - **Joining:** use `Player ID`, `Team ID`, `Game ID`, and `Season` (like `2025-26`). Player IDs stay the same across seasons and schools.
-- **Units:** percentages are 0 to 100 (TS % = 58.1, not 0.581).
+- **Units:** source scales are mixed: some rates are fractions and others percentage points. The archetype preparation notebook checks these scales and reconstructs five coarsely rounded core rates. Do not assume a universal 0-100 convention.
 - **D1 men's only.** D2/D3 stats aren't available through our API access.
 - **Season stats exclude games against non-D1 opponents** (CBB Analytics' default), so totals can differ slightly from other sites.
 - **`team_games` is one row per team per game** (offensive view). The opponent's numbers are in the "Opp" columns.
 - **`team_possession_types` is long format:** separate rows per team, side (Offense/Defense), and possession type or length. Pivot it for one row per team.
 - **2018-19 play-by-play stats are thinner** (first season of tracking).
 - **Unconfirmed abbreviations:** some columns keep CBB Analytics' codes (S01/S12/S23, Att1/Att2/Att3P, Rim3s, Lane2, Hkm, and a few others). Check the CBB Analytics glossary before relying on them.
+
+## Preliminary archetype comparison
+
+See [PLAYER_ARCHETYPES.md](PLAYER_ARCHETYPES.md) for the two-dataset workflow and [ARCHETYPE_RESULTS.md](ARCHETYPE_RESULTS.md) for the aggregate findings.

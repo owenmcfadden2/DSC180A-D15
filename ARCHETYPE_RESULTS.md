@@ -1,41 +1,83 @@
 # Preliminary Archetype Results
 
-## 1. Experiment summary
+## 1. The 49 variables
 
-Two feature sets were fitted to the same 16,723 player-seasons from 2021-22 through 2025-26, each with at least 200 minutes. There were 42 seeded fits: two datasets, seven archetype counts (6-12) and three starts per count. No players or selected features were removed during modeling.
+These are the model inputs, using the exact names in the preparation notebook. Player and season identifiers are excluded.
 
-The 49-feature baseline includes TS % and three unassisted-scoring volume fields. The 45-feature reduced variant excludes those four fields. All shared inputs use identical preprocessing parameters.
+| # | Variable |
+| ---: | --- |
+| 1 | `Height (in)` |
+| 2 | `Usage %` |
+| 3 | `TS %` |
+| 4 | `FT Rate` |
+| 5 | `OReb %` |
+| 6 | `DReb %` |
+| 7 | `Ast %` |
+| 8 | `TO %` |
+| 9 | `Stl %` |
+| 10 | `Blk %` |
+| 11 | `Ast/TO` |
+| 12 | `Transition Shot %` |
+| 13 | `Blocked Per FGA` |
+| 14 | `Fouls Drawn Per FGA` |
+| 15 | `2nd Chance Pts % Pts` |
+| 16 | `Fast Break Pts % Pts` |
+| 17 | `Paint Pts % Pts` |
+| 18 | `3PM % Pts` |
+| 19 | `% Of Team Ast` |
+| 20 | `% Of Team FGA` |
+| 21 | `% Of Team FTA` |
+| 22 | `% Of Team TO` |
+| 23 | `PF %` |
+| 24 | `% Ast Rim` |
+| 25 | `% Ast Paint` |
+| 26 | `Rim Assisted %` |
+| 27 | `FGA Freq % Halfcourt` |
+| 28 | `% Ast Dunk` |
+| 29 | `Dunk FGA Freq %` |
+| 30 | `Layup FGA Freq %` |
+| 31 | `Alley-Oop Ast/40` |
+| 32 | `% Ast3` |
+| 33 | `3PM Assisted %` |
+| 34 | `Pts Created/40` |
+| 35 | `Pts Scored Unassisted/40` |
+| 36 | `2PM Unassisted/40` |
+| 37 | `3PM Unassisted/40` |
+| 38 | `Shooting Foul Drawn %` |
+| 39 | `And1 %` |
+| 40 | `Ffl Drawn %` |
+| 41 | `Off Fouls Drawn %` |
+| 42 | `FT Ratio` |
+| 43 | `Blk Rcv %` |
+| 44 | `Individual Stop %` |
+| 45 | `Att1 Attempt Share %` |
+| 46 | `Stl + Blk Per PF` |
+| 47 | `Non-Rim 2 Assisted %` |
+| 48 | `Rim 2 Attempt Share %` |
+| 49 | `3P Attempt Share %` |
 
-## 2. Reconstruction comparison
+## 2. The 45-variable version
 
-Values below are best-run RSS divided by each dataset's own total centered standardized sum of squares. Lower values mean better reconstruction of that particular feature set. Because the feature sets differ, a lower ratio in one dataset alone does not establish that it is a better model.
+This version removes four efficiency/scoring-outcome variables to put more emphasis on playing style. `TS %` measures efficiency; the other three measure made-shot production rather than efficiency directly. All other inputs remain the same.
 
-| Archetypes | 49-feature baseline | 45-feature reduced |
-| --- | ---: | ---: |
-| 6 | 0.4816 | 0.4813 |
-| 7 | 0.4545 | 0.4572 |
-| 8 | 0.4322 | 0.4312 |
-| 9 | 0.4112 | 0.4118 |
-| 10 | 0.3962 | 0.3945 |
-| 11 | 0.3825 | 0.3763 |
-| 12 | 0.3645 | 0.3646 |
+| Removed variable | Reason |
+| --- | --- |
+| `TS %` | Measures scoring efficiency rather than how the player plays. |
+| `Pts Scored Unassisted/40` | Depends on points actually scored, mixing self-creation with scoring outcomes. |
+| `2PM Unassisted/40` | Counts made unassisted twos, so it depends on conversion as well as shot creation. |
+| `3PM Unassisted/40` | Counts made unassisted threes, so it depends on conversion as well as shot creation. |
 
-## 3. Why review nine archetypes?
+`Pts Created/40` stays in both versions, as agreed.
 
-Reconstruction improved gradually as the count increased, without a sharp single cutoff. A discrete curve-knee screen suggested nine for the baseline and eight for the reduced variant. Nine had the lowest average matched-profile and player-mixture differences across the three starts within both datasets, making it a useful common review count. This is a provisional review choice, not a validated optimum.
+## 3. Archetype counts tested
 
-| Initialization sensitivity at K=9 | Baseline | Reduced |
-| --- | ---: | ---: |
-| Aligned profile RMS difference (feature SD units) | 0.652 | 0.782 |
-| Mean player-mixture L1 difference | 0.223 | 0.358 |
+Both datasets were fitted with **K = 6, 7, 8, 9, 10, 11 and 12**, using three starts per count (seeds 42, 43 and 44). The sample was player-seasons from 2021-22 onward with at least 200 minutes. The results below show the selected **K = 9** models.
 
-All 42 runs met the configured stopping criterion. Some NNLS loss histories were nonmonotone, so stopping is not evidence of a global optimum. Every history was retained and fitted weights, archetype construction and RSS were independently checked. These sensitivity measures compare initializations on the same observations; they are not resampling confidence estimates.
+## 4. The two nine-archetype results
 
-## 4. Working labels for the nine-profile review
+### Labels
 
-The names below are descriptive working labels developed from the fitted profiles and local player examples. They are not hard classes: each player retains all nine mixture weights. A3 and A7 remain under review. IDs are specific to their respective fit.
-
-| ID | 49-feature baseline | 45-feature reduced |
+| Archetype | 49-variable version | 45-variable version |
 | --- | --- | --- |
 | A1 | Offensive rebounder | Offensive rebounder |
 | A2 | Lead guard | Lead guard |
@@ -47,136 +89,319 @@ The names below are descriptive working labels developed from the fitted profile
 | A8 | Traditional big | Traditional big |
 | A9 | Perimeter scoring wing | Perimeter scoring wing |
 
-The label review distinguished the offensive-rebounding role from the rim-protection/dunk role, and the high-involvement interior scorer from the more assisted perimeter scorer. The baseline A3 profile was more guard-sized and turnover-heavy than the reduced model's corresponding connective-wing profile. Labels describe observed statistical patterns rather than verified possession actions or scouting evaluations.
+### How to read the statistics
 
-## 5. Variables supporting each K=9 label
+Each table lists the ten largest absolute standardized deviations, strongest first. **High** and **Low** mean above or below the pooled player-season mean after median imputation. These describe the fitted archetype, not an average of a hard-assigned player group. The short explanations also use supporting statistics from the saved profiles.
 
-The following evidence comes from the selected seed-44 K=9 fit for each dataset. For each archetype, the ten listed variables are ordered by the absolute value of its standardized profile coordinate. **High** means above the pooled, median-imputed player-season mean; **low** means below it. Ranking uses the unrounded coordinates. These are the largest profile deviations, not causal effects, predictive feature importance, or averages of players assigned to a hard cluster. There is no additional outlier significance threshold.
+`% Ast3`, `% Ast Rim` and `% Ast Dunk` describe where a player’s assists lead. Assisted-make percentages describe how the player’s own shots were created. `% Of Team ...` variables are the individual player’s shares of team totals. Numerical profiles and player records remain private.
 
-The label explanations also use relevant supporting fields outside the top ten, including the privately retained own-shot assisted percentage. `% Of Team ...` fields measure the individual player's share of a team total. `% Ast3`, `% Ast Rim` and `% Ast Dunk` describe assist destinations; `3PM Assisted %`, `Rim Assisted %` and `Non-Rim 2 Assisted %` describe the player's own made shots. Numerical profiles and player examples remain local.
-
-### 5.1. 49-feature baseline
+### 49-variable version
 
 #### A1: Offensive rebounder
 
-**Largest deviations, ranked:** `Att1 Attempt Share %` (low), `2nd Chance Pts % Pts` (high), `Fouls Drawn Per FGA` (high), `PF %` (high), `FGA Freq % Halfcourt` (low), `Rim 2 Attempt Share %` (high), `Layup FGA Freq %` (high), `Blocked Per FGA` (high), `FT Rate` (high), `OReb %` (high).
+| Prominent statistic | Direction |
+| --- | --- |
+| `Att1 Attempt Share %` | Low |
+| `2nd Chance Pts % Pts` | High |
+| `Fouls Drawn Per FGA` | High |
+| `PF %` | High |
+| `FGA Freq % Halfcourt` | Low |
+| `Rim 2 Attempt Share %` | High |
+| `Layup FGA Freq %` | High |
+| `Blocked Per FGA` | High |
+| `FT Rate` | High |
+| `OReb %` | High |
 
-**Label rationale:** High `OReb %`, `2nd Chance Pts % Pts` and `Rim 2 Attempt Share %` support the offensive-rebounding label. Low `Att1 Attempt Share %` is consistent with a greater share of later attempts in a possession. Low `Usage %`, `Ast %` and `Pts Created/40` distinguish this role from the high-involvement interior scorer A5. A1 has more offensive rebounding and a higher rim-attempt share than A8, whose defining extremes are blocks and dunks.
+**Why this label:** High offensive rebounding, second-chance scoring and rim-attempt share support this label. Low usage and shot creation suggest a cleanup role. Compared with A8, A1 is more oriented toward offensive rebounds and less toward blocks and dunks.
 
 #### A2: Lead guard
 
-**Largest deviations, ranked:** `3PM Unassisted/40` (high), `% Of Team Ast` (high), `Ast %` (high), `3PM Assisted %` (low), `Pts Scored Unassisted/40` (high), `Pts Created/40` (high), `% Of Team TO` (high), `Alley-Oop Ast/40` (high), `% Of Team FGA` (high), `Usage %` (high).
+| Prominent statistic | Direction |
+| --- | --- |
+| `3PM Unassisted/40` | High |
+| `% Of Team Ast` | High |
+| `Ast %` | High |
+| `3PM Assisted %` | Low |
+| `Pts Scored Unassisted/40` | High |
+| `Pts Created/40` | High |
+| `% Of Team TO` | High |
+| `Alley-Oop Ast/40` | High |
+| `% Of Team FGA` | High |
+| `Usage %` | High |
 
-**Label rationale:** High `Ast %`, `% Of Team Ast`, `Pts Created/40` and `Usage %` support a primary creator. High unassisted scoring volume, especially `3PM Unassisted/40`, and low `3PM Assisted %` support self-created offense. Low `Height (in)` adds guard-sized context. `% Of Team TO` is also high, so the label describes responsibility rather than error-free play.
+**Why this label:** High assist rate, points created and usage identify a primary ball handler. High unassisted scoring and low assisted-three percentage support self-created offense.
 
 #### A3: Defensive connector / secondary ball handler
 
-**Largest deviations, ranked:** `TO %` (high), `Off Fouls Drawn %` (high), `Fouls Drawn Per FGA` (high), `Individual Stop %` (high), `TS %` (low), `Blocked Per FGA` (high), `Stl %` (high), `Ast %` (high), `Rim Assisted %` (low), `FGA Freq % Halfcourt` (high).
+| Prominent statistic | Direction |
+| --- | --- |
+| `TO %` | High |
+| `Off Fouls Drawn %` | High |
+| `Fouls Drawn Per FGA` | High |
+| `Individual Stop %` | High |
+| `TS %` | Low |
+| `Blocked Per FGA` | High |
+| `Stl %` | High |
+| `Ast %` | High |
+| `Rim Assisted %` | Low |
+| `FGA Freq % Halfcourt` | High |
 
-**Label rationale:** High `Ast %` with smaller `Height (in)` supports secondary ball handling. High `Off Fouls Drawn %`, `Stl %` and `Individual Stop %` supply the defensive part of the label. However, `TO %` is the strongest deviation and `TS %` is low. This is a turnover-heavy defensive/creation profile; the connector label remains provisional. Unlike reduced-model A3, its `DReb %` is below the pooled mean.
+**Why this label:** High assist rate, steals and individual stops support secondary ball handling with defensive activity. Turnover rate is the largest deviation, so the connector label remains under review.
 
 #### A4: Three-point specialist
 
-**Largest deviations, ranked:** `3PM % Pts` (high), `% Ast3` (high), `3P Attempt Share %` (high), `% Ast Rim` (low), `Paint Pts % Pts` (low), `Layup FGA Freq %` (low), `TO %` (low), `Individual Stop %` (low), `2PM Unassisted/40` (low), `And1 %` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `3PM % Pts` | High |
+| `% Ast3` | High |
+| `3P Attempt Share %` | High |
+| `% Ast Rim` | Low |
+| `Paint Pts % Pts` | Low |
+| `Layup FGA Freq %` | Low |
+| `TO %` | Low |
+| `Individual Stop %` | Low |
+| `2PM Unassisted/40` | Low |
+| `And1 %` | Low |
 
-**Label rationale:** High `3P Attempt Share %` and `3PM % Pts`, with low rim share, layup frequency and paint scoring, support a specialized perimeter shot diet. `% Ast3` is high and `% Ast Rim` is low: when this profile records assists, their destinations lean toward threes. Its own made shots are mostly assisted in the interpretation export. Relative to A9, the shot diet is more concentrated in threes and `Usage %` is lower.
+**Why this label:** A high three-point attempt share and a high share of points from threes support a specialist shooter. Rim attempts and paint scoring are low. Its assists also tend to create threes.
 
 #### A5: Interior scoring big
 
-**Largest deviations, ranked:** `% Of Team FTA` (high), `2PM Unassisted/40` (high), `Ffl Drawn %` (high), `Pts Scored Unassisted/40` (high), `Usage %` (high), `% Of Team TO` (high), `% Of Team FGA` (high), `Pts Created/40` (high), `DReb %` (high), `Transition Shot %` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `% Of Team FTA` | High |
+| `2PM Unassisted/40` | High |
+| `Ffl Drawn %` | High |
+| `Pts Scored Unassisted/40` | High |
+| `Usage %` | High |
+| `% Of Team TO` | High |
+| `% Of Team FGA` | High |
+| `Pts Created/40` | High |
+| `DReb %` | High |
+| `Transition Shot %` | Low |
 
-**Label rationale:** High `Usage %`, `% Of Team FGA`, `% Of Team FTA`, unassisted two-point scoring and `Pts Created/40` support a heavily involved interior scorer. High `DReb %` and above-average height add big-player context. Low `3P Attempt Share %` is why this is an interior scoring big rather than a perimeter scoring wing. `Dunk FGA Freq %` is not elevated, so a dunking-big label would overstate the evidence. A8 is much more distinctive for blocks and dunks.
+**Why this label:** High usage, unassisted two-point scoring, free-throw involvement and defensive rebounding support an interior scorer. Three-point share is low; dunk frequency is not elevated enough to make dunking its defining trait.
 
 #### A6: Low-usage floor spacer
 
-**Largest deviations, ranked:** `FT Ratio` (low), `And1 %` (high), `3PM % Pts` (high), `FT Rate` (low), `3P Attempt Share %` (high), `Shooting Foul Drawn %` (low), `Pts Scored Unassisted/40` (low), `Ffl Drawn %` (low), `Fouls Drawn Per FGA` (low), `% Of Team FTA` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `FT Ratio` | Low |
+| `And1 %` | High |
+| `3PM % Pts` | High |
+| `FT Rate` | Low |
+| `3P Attempt Share %` | High |
+| `Shooting Foul Drawn %` | Low |
+| `Pts Scored Unassisted/40` | Low |
+| `Ffl Drawn %` | Low |
+| `Fouls Drawn Per FGA` | Low |
+| `% Of Team FTA` | Low |
 
-**Label rationale:** High three-point attempt and scoring shares, low `Usage %`, low free-throw involvement and mostly assisted makes support a low-usage floor spacer. The two largest deviations are actually very low `FT Ratio` and very high `And1 %`. The former has an unresolved definition and the latter is conditional on shooting-foul draws and can be sparse. They distinguish the fitted profile statistically, but do not establish that this player frequently creates and-one opportunities.
+**Why this label:** High three-point share, low usage and low free-throw involvement support a floor spacer. The extreme And1 percentage is conditional on shooting-foul draws and can reflect few opportunities; FT Ratio remains undefined.
 
 #### A7: Defensive / transition player
 
-**Largest deviations, ranked:** `Fast Break Pts % Pts` (high), `Transition Shot %` (high), `FGA Freq % Halfcourt` (low), `Stl %` (high), `Stl + Blk Per PF` (high), `Individual Stop %` (high), `% Ast Rim` (high), `Blocked Per FGA` (high), `% Ast3` (low), `Layup FGA Freq %` (high).
+| Prominent statistic | Direction |
+| --- | --- |
+| `Fast Break Pts % Pts` | High |
+| `Transition Shot %` | High |
+| `FGA Freq % Halfcourt` | Low |
+| `Stl %` | High |
+| `Stl + Blk Per PF` | High |
+| `Individual Stop %` | High |
+| `% Ast Rim` | High |
+| `Blocked Per FGA` | High |
+| `% Ast3` | Low |
+| `Layup FGA Freq %` | High |
 
-**Label rationale:** High `Fast Break Pts % Pts` and `Transition Shot %`, with low `FGA Freq % Halfcourt`, support transition-oriented offense. High `Stl %`, `Stl + Blk Per PF` and `Individual Stop %` add defensive event activity. This explains the defensive/transition label. These events do not establish overall defensive quality, so the defensive interpretation remains under review.
+**Why this label:** High transition shooting and fast-break scoring, together with high steals and stops, support a defensive/transition role. The defensive part of the label remains under review.
 
 #### A8: Traditional big
 
-**Largest deviations, ranked:** `Blk %` (high), `Dunk FGA Freq %` (high), `Individual Stop %` (high), `Stl + Blk Per PF` (high), `Height (in)` (high), `Rim 2 Attempt Share %` (high), `Non-Rim 2 Assisted %` (high), `Paint Pts % Pts` (high), `TS %` (high), `Att1 Attempt Share %` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `Blk %` | High |
+| `Dunk FGA Freq %` | High |
+| `Individual Stop %` | High |
+| `Stl + Blk Per PF` | High |
+| `Height (in)` | High |
+| `Rim 2 Attempt Share %` | High |
+| `Non-Rim 2 Assisted %` | High |
+| `Paint Pts % Pts` | High |
+| `TS %` | High |
+| `Att1 Attempt Share %` | Low |
 
-**Label rationale:** Extreme `Blk %`, `Dunk FGA Freq %`, `Individual Stop %` and `Stl + Blk Per PF`, together with high `Height (in)`, support a traditional rim-protecting big. High rim share, paint scoring, `DReb %`, `Rim Assisted %` and `Non-Rim 2 Assisted %` add an assisted interior role. Relative to A1, A8 is taller and much more block/dunk oriented, while A1 has higher offensive rebounding and a larger rim-attempt share.
+**Why this label:** Height, blocks and dunk frequency are the defining traits. High rim-attempt share and assisted interior makes support a traditional big; blocks and dunks distinguish A8 from offensive-rebounding A1.
 
 #### A9: Perimeter scoring wing
 
-**Largest deviations, ranked:** `% Ast Rim` (high), `% Ast Dunk` (high), `% Ast3` (low), `3PM % Pts` (high), `Layup FGA Freq %` (low), `3P Attempt Share %` (high), `And1 %` (low), `Blocked Per FGA` (low), `Paint Pts % Pts` (low), `Rim 2 Attempt Share %` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `% Ast Rim` | High |
+| `% Ast Dunk` | High |
+| `% Ast3` | Low |
+| `3PM % Pts` | High |
+| `Layup FGA Freq %` | Low |
+| `3P Attempt Share %` | High |
+| `And1 %` | Low |
+| `Blocked Per FGA` | Low |
+| `Paint Pts % Pts` | Low |
+| `Rim 2 Attempt Share %` | Low |
 
-**Label rationale:** High `3P Attempt Share %` and `3PM % Pts`, with low rim share and paint scoring, support perimeter scoring. Its usage and team shot share are higher than A4's and A6's, while `Ast %` and `Ast/TO` are low. The largest deviations concern assist destinations: high `% Ast Rim` and `% Ast Dunk`, low `% Ast3`. Those describe the baskets created by its relatively infrequent assists, not its own shot locations. Its own makes are mostly assisted; the label does not imply a primary off-dribble creator.
+**Why this label:** High three-point share and low rim involvement support perimeter scoring. Usage is higher than A4 and A6. High rim/dunk assist shares describe where its passes create baskets, rather than where it takes its own shots.
 
-### 5.2. 45-feature reduced variant
+
+### 45-variable version
 
 #### A1: Offensive rebounder
 
-**Largest deviations, ranked:** `Att1 Attempt Share %` (low), `2nd Chance Pts % Pts` (high), `PF %` (high), `Fouls Drawn Per FGA` (high), `Blocked Per FGA` (high), `Rim 2 Attempt Share %` (high), `Layup FGA Freq %` (high), `FGA Freq % Halfcourt` (low), `FT Rate` (high), `Shooting Foul Drawn %` (high).
+| Prominent statistic | Direction |
+| --- | --- |
+| `Att1 Attempt Share %` | Low |
+| `2nd Chance Pts % Pts` | High |
+| `PF %` | High |
+| `Fouls Drawn Per FGA` | High |
+| `Blocked Per FGA` | High |
+| `Rim 2 Attempt Share %` | High |
+| `Layup FGA Freq %` | High |
+| `FGA Freq % Halfcourt` | Low |
+| `FT Rate` | High |
+| `Shooting Foul Drawn %` | High |
 
-**Label rationale:** High `OReb %`, `2nd Chance Pts % Pts` and `Rim 2 Attempt Share %` support offensive rebounding and interior cleanup. Low `Att1 Attempt Share %` is consistent with more later attempts in a possession. Low `Usage %`, `Ast %` and `Pts Created/40` distinguish it from A5. Compared with A8, A1 has more offensive rebounding and a higher rim-attempt share; A8 is much more distinctive for blocks and dunks.
+**Why this label:** High offensive rebounding and second-chance scoring support the label, alongside a rim-heavy shot diet. Low usage suggests a cleanup role; A8 is more distinctive for blocks and dunks.
 
 #### A2: Lead guard
 
-**Largest deviations, ranked:** `% Of Team Ast` (high), `Ast %` (high), `% Of Team TO` (high), `Pts Created/40` (high), `3PM Assisted %` (low), `Alley-Oop Ast/40` (high), `% Of Team FTA` (high), `% Of Team FGA` (high), `Usage %` (high), `Height (in)` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `% Of Team Ast` | High |
+| `Ast %` | High |
+| `% Of Team TO` | High |
+| `Pts Created/40` | High |
+| `3PM Assisted %` | Low |
+| `Alley-Oop Ast/40` | High |
+| `% Of Team FTA` | High |
+| `% Of Team FGA` | High |
+| `Usage %` | High |
+| `Height (in)` | Low |
 
-**Label rationale:** High `Ast %`, `% Of Team Ast`, `Pts Created/40`, `Ast/TO` and `Usage %` support a lead creator. Low `3PM Assisted %` and low own-shot assistance in the interpretation export support self-created offense, even though the explicit unassisted-scoring volume inputs were removed. Smaller `Height (in)` provides guard context. High `% Of Team TO` reflects substantial turnover involvement alongside the passing responsibility.
+**Why this label:** High assist rate, points created, assist-to-turnover ratio and usage support a lead guard. Low assisted-three percentage provides evidence of self-created shots even after unassisted scoring-volume inputs are removed.
 
 #### A3: Connective wing
 
-**Largest deviations, ranked:** `Off Fouls Drawn %` (high), `Individual Stop %` (high), `Fouls Drawn Per FGA` (high), `TO %` (high), `PF %` (high), `Shooting Foul Drawn %` (high), `FGA Freq % Halfcourt` (high), `FT Rate` (high), `Transition Shot %` (low), `Blk Rcv %` (high).
+| Prominent statistic | Direction |
+| --- | --- |
+| `Off Fouls Drawn %` | High |
+| `Individual Stop %` | High |
+| `Fouls Drawn Per FGA` | High |
+| `TO %` | High |
+| `PF %` | High |
+| `Shooting Foul Drawn %` | High |
+| `FGA Freq % Halfcourt` | High |
+| `FT Rate` | High |
+| `Transition Shot %` | Low |
+| `Blk Rcv %` | High |
 
-**Label rationale:** Above-average `Ast %`, `DReb %` and height, with less scoring involvement than A5, were the basis for connective wing. Its assist rate exceeds A5's, while `Usage %`, team shot share and rebounding are lower than A5's. However, the strongest fitted deviation is `Off Fouls Drawn %`, followed by defensive-stop and foul-related rates; passing is not its dominant statistical extreme. High `TO %` also weakens a clean connector interpretation. Keep this label under review rather than treating the name as settled.
+**Why this label:** Above-average assists and defensive rebounding, with less scoring involvement than A5, motivated connective wing. However, offensive fouls drawn and stop rate are the largest deviations, while turnovers are high. The label remains under review.
 
 #### A4: Three-point specialist
 
-**Largest deviations, ranked:** `% Ast3` (high), `% Ast Rim` (low), `3PM % Pts` (high), `3P Attempt Share %` (high), `Layup FGA Freq %` (low), `Paint Pts % Pts` (low), `FT Ratio` (high), `And1 %` (low), `Individual Stop %` (low), `% Of Team TO` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `% Ast3` | High |
+| `% Ast Rim` | Low |
+| `3PM % Pts` | High |
+| `3P Attempt Share %` | High |
+| `Layup FGA Freq %` | Low |
+| `Paint Pts % Pts` | Low |
+| `FT Ratio` | High |
+| `And1 %` | Low |
+| `Individual Stop %` | Low |
+| `% Of Team TO` | Low |
 
-**Label rationale:** High `3P Attempt Share %` and `3PM % Pts`, plus low rim share, paint scoring and layup frequency, support a three-point specialist. High `% Ast3` and low `% Ast Rim` describe where its assists go; its own makes are also mostly assisted. Its usage is lower and its three-point concentration is greater than A9's. High `FT Ratio` is an unresolved exported field, not evidence that the profile draws many free throws: `FT Rate` is low.
+**Why this label:** High three-point attempt and scoring shares, with little rim or paint involvement, support a specialist shooter. Its passes also tend to create threes. High FT Ratio does not imply frequent foul drawing; its definition remains unresolved.
 
 #### A5: Scoring wing
 
-**Largest deviations, ranked:** `% Of Team FTA` (high), `Ffl Drawn %` (high), `Usage %` (high), `DReb %` (high), `% Of Team FGA` (high), `% Of Team TO` (high), `Pts Created/40` (high), `Shooting Foul Drawn %` (high), `OReb %` (high), `Height (in)` (high).
+| Prominent statistic | Direction |
+| --- | --- |
+| `% Of Team FTA` | High |
+| `Ffl Drawn %` | High |
+| `Usage %` | High |
+| `DReb %` | High |
+| `% Of Team FGA` | High |
+| `% Of Team TO` | High |
+| `Pts Created/40` | High |
+| `Shooting Foul Drawn %` | High |
+| `OReb %` | High |
+| `Height (in)` | High |
 
-**Label rationale:** High `Usage %`, `% Of Team FGA`, `% Of Team FTA`, `Pts Created/40` and foul-drawing rates support a heavily involved scorer. High `DReb %`, `OReb %` and height distinguish it from A3 and A9. The saved name is scoring wing, but low `3P Attempt Share %` and its interior shot diet qualify that wording: the profile is an interior-oriented scorer with forward/big characteristics, not a perimeter wing. It is not as block/dunk oriented as A8.
+**Why this label:** High usage, team shot share, free-throw involvement and rebounding support a scoring role with forward/big characteristics. The saved label is scoring wing, although its low three-point share makes it an interior-oriented scorer.
 
 #### A6: Low-usage floor spacer
 
-**Largest deviations, ranked:** `FT Ratio` (low), `And1 %` (high), `3PM % Pts` (high), `FT Rate` (low), `3P Attempt Share %` (high), `Shooting Foul Drawn %` (low), `Ffl Drawn %` (low), `Fouls Drawn Per FGA` (low), `% Of Team FTA` (low), `% Of Team TO` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `FT Ratio` | Low |
+| `And1 %` | High |
+| `3PM % Pts` | High |
+| `FT Rate` | Low |
+| `3P Attempt Share %` | High |
+| `Shooting Foul Drawn %` | Low |
+| `Ffl Drawn %` | Low |
+| `Fouls Drawn Per FGA` | Low |
+| `% Of Team FTA` | Low |
+| `% Of Team TO` | Low |
 
-**Label rationale:** High three-point attempt and scoring shares, low `Usage %`, low free-throw involvement and mostly assisted makes support a low-usage floor spacer. Very low `FT Ratio` and very high `And1 %` are the largest fitted extremes. As in the baseline, the unresolved FT Ratio definition and the potentially sparse conditional And1 denominator limit how literally those extremes should be interpreted. They are not evidence of frequent and-one creation.
+**Why this label:** High three-point share, low usage and low free-throw involvement support a floor spacer. The extreme And1 percentage can be based on few shooting-foul draws; FT Ratio remains undefined.
 
 #### A7: Defensive / transition player
 
-**Largest deviations, ranked:** `Fast Break Pts % Pts` (high), `Transition Shot %` (high), `Stl %` (high), `FGA Freq % Halfcourt` (low), `Stl + Blk Per PF` (high), `Individual Stop %` (high), `Blocked Per FGA` (high), `Height (in)` (low), `% Ast Rim` (high), `% Ast3` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `Fast Break Pts % Pts` | High |
+| `Transition Shot %` | High |
+| `Stl %` | High |
+| `FGA Freq % Halfcourt` | Low |
+| `Stl + Blk Per PF` | High |
+| `Individual Stop %` | High |
+| `Blocked Per FGA` | High |
+| `Height (in)` | Low |
+| `% Ast Rim` | High |
+| `% Ast3` | Low |
 
-**Label rationale:** High `Fast Break Pts % Pts` and `Transition Shot %`, together with low halfcourt frequency, support transition-oriented offense. High `Stl %`, `Stl + Blk Per PF` and `Individual Stop %` support defensive event activity. Its usage and height are lower than baseline A7's. The defensive/transition name remains a descriptive working label rather than a validated overall defensive rating.
+**Why this label:** Fast-break scoring and transition shooting dominate the offensive profile. High steals and individual stops supply the defensive component, which remains a provisional interpretation.
 
 #### A8: Traditional big
 
-**Largest deviations, ranked:** `Blk %` (high), `Dunk FGA Freq %` (high), `Stl + Blk Per PF` (high), `Individual Stop %` (high), `Height (in)` (high), `Rim 2 Attempt Share %` (high), `Non-Rim 2 Assisted %` (high), `Paint Pts % Pts` (high), `Att1 Attempt Share %` (low), `FGA Freq % Halfcourt` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `Blk %` | High |
+| `Dunk FGA Freq %` | High |
+| `Stl + Blk Per PF` | High |
+| `Individual Stop %` | High |
+| `Height (in)` | High |
+| `Rim 2 Attempt Share %` | High |
+| `Non-Rim 2 Assisted %` | High |
+| `Paint Pts % Pts` | High |
+| `Att1 Attempt Share %` | Low |
+| `FGA Freq % Halfcourt` | Low |
 
-**Label rationale:** Very high `Blk %`, `Dunk FGA Freq %`, `Stl + Blk Per PF` and `Individual Stop %`, plus tall `Height (in)`, support a traditional rim-protecting big. High rim share, paint scoring, `DReb %` and own-shot assisted percentages support an assisted interior role. Compared with A1, A8 is taller and much more block/dunk oriented; A1 has more offensive rebounding and a larger rim-attempt share.
+**Why this label:** Extreme blocks and dunk frequency, together with height and a rim-heavy shot diet, support a traditional big. A8 is more block/dunk oriented than A1, while A1 has more offensive rebounding.
 
 #### A9: Perimeter scoring wing
 
-**Largest deviations, ranked:** `% Ast Rim` (high), `% Ast3` (low), `% Ast Dunk` (high), `3PM % Pts` (high), `3P Attempt Share %` (high), `Layup FGA Freq %` (low), `Blocked Per FGA` (low), `And1 %` (low), `Shooting Foul Drawn %` (low), `Paint Pts % Pts` (low).
+| Prominent statistic | Direction |
+| --- | --- |
+| `% Ast Rim` | High |
+| `% Ast3` | Low |
+| `% Ast Dunk` | High |
+| `3PM % Pts` | High |
+| `3P Attempt Share %` | High |
+| `Layup FGA Freq %` | Low |
+| `Blocked Per FGA` | Low |
+| `And1 %` | Low |
+| `Shooting Foul Drawn %` | Low |
+| `Paint Pts % Pts` | Low |
 
-**Label rationale:** High three-point attempt and scoring shares, low rim share and low paint scoring support a perimeter scorer. Its usage and team shot share exceed A4's and A6's, while `Ast %` and `Ast/TO` are low. High `% Ast Rim` and `% Ast Dunk`, with low `% Ast3`, describe the destinations of its relatively infrequent assists. They do not mean A9 personally finishes at the rim. Its own makes are mostly assisted, so perimeter scoring wing does not imply a primary self-creating scorer.
-
-## 6. Interpretation questions that remain
-
-- A high And1 percentage can be based on only one or two shooting-foul draws. A low-FT spacing profile can therefore have a high conditional And1 rate without frequently drawing fouls. Median imputation does not address valid but sparse observed percentages.
-- Assist-destination shares describe where a player's passes create baskets. Own-shot assisted percentages describe how that player's made shots were created. These must be interpreted separately.
-- The exported FT Ratio definition remains unresolved. It does not match the tested FTA/FGA, FTA-per-possession or proposed FT-trip-share definitions. High/low values should not be treated as a quality ranking.
-- Large construction weights on a few observations are expected for extreme archetypes; small-denominator behavior and initialization variation still need review before durable labels are assigned.
-- Equal feature variance does not give each basketball domain equal influence. No correlated-feature pruning, clipping, smoothing or extra domain weights were applied in this initial comparison.
-
-## 7. Reproduction and output boundaries
-
-Run the preparation notebook and both modeling scripts in the order listed in [PLAYER_ARCHETYPES.md](PLAYER_ARCHETYPES.md). Detailed fitted profiles, representative players, mixture weights, missingness masks, arrays and plots remain in the private local analysis outputs; they are deliberately not embedded in this repository. The committed notebook has no outputs.
-
-The table records the initial source snapshot and fitted comparison. Changes to the data, implementation or numerical environment can change local solutions; rerun the experiments and compare profiles before reusing labels.
+**Why this label:** High three-point share and low rim involvement support perimeter scoring, with more usage than A4 and A6. Rim/dunk assist shares describe its passes; its own made shots are mostly assisted.

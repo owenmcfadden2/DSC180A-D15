@@ -10,10 +10,12 @@ Set your data folder ONE of two ways:
      (copy local_paths.example.py and edit it)
   2. Set the environment variable CAPSTONE_DATA_DIR
 
+All data files live directly in DATA_DIR (no subfolders).
+
 Usage in any script or notebook:
   import pandas as pd
   from paths import PLAYERS_FULL
-  players = pd.read_parquet(PLAYERS_FULL)
+  players = pd.read_csv(PLAYERS_FULL)   # pandas handles .gz automatically
 
 Notebooks in a subfolder (e.g. notebooks/) need the repo root on the path first:
   import sys; sys.path.insert(0, "..")
@@ -49,30 +51,59 @@ DATA_DIR = _find_data_dir()
 if not DATA_DIR.exists():
   raise FileNotFoundError(f"DATA_DIR does not exist: {DATA_DIR}")
 
+
+def _glob_one(pattern, fallback):
+  """Resolve a file whose exact name may vary (e.g. season suffix)."""
+  matches = sorted(DATA_DIR.glob(pattern))
+  return matches[0] if matches else DATA_DIR / fallback
+
+
+# Reference
 DATA_DICT = DATA_DIR / "data_dictionary.csv"
+README = DATA_DIR / "README.md"
+CONFERENCES = DATA_DIR / "conferences.csv"
+TRANSFERS = DATA_DIR / "transfers.csv"
 
-# full/
-PLAYERS_FULL = DATA_DIR / "full" / "players_full.parquet"
-TEAMS_FULL = DATA_DIR / "full" / "teams_full.parquet"
+# Players
+PLAYERS = DATA_DIR / "players.csv"
+PLAYERS_FULL = DATA_DIR / "players_full.csv.gz"
+PLAYERS_CONF_ONLY = DATA_DIR / "players_conference_only.csv"
+PLAYERS_PBP_CONF_ONLY = _glob_one(
+  "players_pbp_conference*.csv",
+  "players_pbp_conference_only_25_26_INCOMPLETE.csv",
+)
 
-# clean/
-PLAYERS = DATA_DIR / "clean" / "players.csv"
-TEAMS = DATA_DIR / "clean" / "teams.csv"
-CONFERENCES = DATA_DIR / "clean" / "conferences.csv"
-TRANSFERS = DATA_DIR / "clean" / "transfers.csv"
+# Teams
+TEAMS = DATA_DIR / "teams.csv"
+TEAMS_FULL = DATA_DIR / "teams_full.csv"
+TEAMS_CONF_ONLY = DATA_DIR / "teams_conference_only.csv"
+TEAMS_PBP_CONF_ONLY = DATA_DIR / "teams_pbp_conference_only.csv"
+TEAM_POSSESSION_TYPES = DATA_DIR / "team_possession_types.csv"
 
-# raw/
-RAW_BACKUP = DATA_DIR / "raw" / "cbb_raw_backup.zip"
+# Game level
+GAMES = DATA_DIR / "games.csv.gz"
+TEAM_GAMES = DATA_DIR / "team_games.csv.gz"
+PLAYER_GAMES = DATA_DIR / "player_games.csv.gz"
+LINEUPS = DATA_DIR / "lineups.csv.gz"
 
 ALL_FILES = {
   "DATA_DICT": DATA_DICT,
-  "PLAYERS_FULL": PLAYERS_FULL,
-  "TEAMS_FULL": TEAMS_FULL,
-  "PLAYERS": PLAYERS,
-  "TEAMS": TEAMS,
+  "README": README,
   "CONFERENCES": CONFERENCES,
   "TRANSFERS": TRANSFERS,
-  "RAW_BACKUP": RAW_BACKUP,
+  "PLAYERS": PLAYERS,
+  "PLAYERS_FULL": PLAYERS_FULL,
+  "PLAYERS_CONF_ONLY": PLAYERS_CONF_ONLY,
+  "PLAYERS_PBP_CONF_ONLY": PLAYERS_PBP_CONF_ONLY,
+  "TEAMS": TEAMS,
+  "TEAMS_FULL": TEAMS_FULL,
+  "TEAMS_CONF_ONLY": TEAMS_CONF_ONLY,
+  "TEAMS_PBP_CONF_ONLY": TEAMS_PBP_CONF_ONLY,
+  "TEAM_POSSESSION_TYPES": TEAM_POSSESSION_TYPES,
+  "GAMES": GAMES,
+  "TEAM_GAMES": TEAM_GAMES,
+  "PLAYER_GAMES": PLAYER_GAMES,
+  "LINEUPS": LINEUPS,
 }
 
 
@@ -84,7 +115,7 @@ def check():
     found = path.exists()
     ok = ok and found
     status = "OK     " if found else "MISSING"
-    print(f"  {status} {name:<20} {path.relative_to(DATA_DIR)}")
+    print(f"  {status} {name:<24} {path.name}")
   print("\nAll files found." if ok else "\nSome files are missing, check DATA_DIR.")
 
 

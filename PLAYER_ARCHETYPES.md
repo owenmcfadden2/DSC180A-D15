@@ -8,7 +8,7 @@ objective is an interpretable starting point for style analysis, not a predictio
 
 | File | Purpose |
 | --- | --- |
-| [Preparation notebook](notebooks/01_player_archetypes_eda.ipynb) | Load the private source, audit and repair inputs, derive features, and prepare both matrices. |
+| [Preparation notebook](notebooks/01_player_archetypes_eda.ipynb) | Prepare both matrices, run both K=9 models, and export player archetype percentages. |
 | [Baseline model](scripts/02_archetypes_baseline.py) | Fit the 49-feature experiment. |
 | [Reduced model](scripts/03_archetypes_style_variant.py) | Fit the 45-feature experiment using the same sample, preprocessing and model settings. |
 | [Results](ARCHETYPE_RESULTS.md) | Aggregate comparison, working labels and interpretation limits. |
@@ -58,7 +58,9 @@ python -m pip install -r requirements-archetypes.txt
 python -m ipykernel install --user --name capstone --display-name "Python (capstone)"
 ```
 
-Run the preparation notebook top to bottom in the `capstone` kernel. Then, from the repo root:
+Run the notebook top to bottom in the `capstone` kernel. Sections 10-11 fit both K=9 models
+and export `results/player_archetype_results.csv` with player/team details. To repeat
+the full K=6-12 comparison separately, run from the repo root:
 
 ```bash
 python scripts/02_archetypes_baseline.py

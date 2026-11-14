@@ -9,6 +9,7 @@ This experiment describes college basketball playing styles using eleven profile
 | [Preparation and fit notebook](notebooks/01_player_archetypes_eda.ipynb) | Prepare the inputs from the shared data, fit the eleven roles, and export player percentages. |
 | [Model script](scripts/fit_pooled_roles.py) | Specify the role pools and stat groups, apply eligibility rules, and solve for mixture weights. |
 | [Results](ARCHETYPE_RESULTS.md) | Review the role pools, player examples, and interpretation limits. |
+| [Player archetype weights](results/player_archetype_results.csv) | Browse the eleven fitted role weights and top three roles for each eligible player-season. |
 
 ## 2. Data and preparation
 
